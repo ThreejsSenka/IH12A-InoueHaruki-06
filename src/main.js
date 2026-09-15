@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import './style.css';
 
 // ----------------------------------------------------------------
@@ -6,7 +7,7 @@ import './style.css';
 // - Scene / Camera / Renderer の初期化
 // - ライト
 // - 地面 + トラック（オーバル）
-// - 簡易な車モデル（Box + Cylinderの組み合わせ）
+// - GLTFモデルの車（読み込み中は簡易な箱で代用）
 // - キーボード操作（矢印キー / WASD）
 // - 車を後方から追従するカメラ
 // ----------------------------------------------------------------
@@ -14,9 +15,11 @@ import './style.css';
 const app = document.getElementById('app');
 
 // UI（操作説明）
+const instructionsHTML =
+  '矢印キー / WASD : 走行操作<br>↑W 加速　↓S 減速・後退　←A →D ステアリング';
 const info = document.createElement('div');
 info.id = 'info';
-info.innerHTML = '矢印キー / WASD : 走行操作<br>↑W 加速　↓S 減速・後退　←A →D ステアリング';
+info.innerHTML = instructionsHTML;
 document.body.appendChild(info);
 
 // --- Scene ---
@@ -86,44 +89,58 @@ infield.position.y = 0.02;
 infield.receiveShadow = true;
 scene.add(infield);
 
-// --- 車（簡易モデル） ---
-function createCar() {
-  const car = new THREE.Group();
-
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xd0342c });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 4), bodyMat);
-  body.position.y = 0.6;
-  body.castShadow = true;
-  car.add(body);
-
-  const cabinMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 1.8), cabinMat);
-  cabin.position.set(0, 1.15, -0.2);
-  cabin.castShadow = true;
-  car.add(cabin);
-
-  const wheelGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.4, 16);
-  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-  const wheelOffsets = [
-    [-1.1, 0.4, 1.3],
-    [1.1, 0.4, 1.3],
-    [-1.1, 0.4, -1.3],
-    [1.1, 0.4, -1.3],
-  ];
-  wheelOffsets.forEach(([x, y, z]) => {
-    const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-    wheel.rotation.z = Math.PI / 2;
-    wheel.position.set(x, y, z);
-    wheel.castShadow = true;
-    car.add(wheel);
-  });
-
-  return car;
-}
-
-const car = createCar();
+// --- 車 ---
+// car : 位置・回転を操作する「ピボット」。走行ロジックはこのGroupに対して行う。
+// 実際に見える3Dモデルは読み込み完了後にこの子として追加する。
+const car = new THREE.Group();
 car.position.set(0, 0, trackOuterRadius - (trackOuterRadius - trackInnerRadius) / 2);
 scene.add(car);
+
+// モデル読み込み中に表示しておく仮の箱
+const placeholder = new THREE.Mesh(
+  new THREE.BoxGeometry(2, 0.6, 4),
+  new THREE.MeshStandardMaterial({ color: 0xd0342c })
+);
+placeholder.position.y = 0.6;
+placeholder.castShadow = true;
+car.add(placeholder);
+
+// --- 車モデル読み込み（GLTF / GLB） ---
+const CAR_MODEL_URL = '/GTR.glb';
+// モデルによって単位・正面の向きが異なるため、読み込み後に見た目を見ながら調整する
+const CAR_MODEL_SCALE = 1;
+const CAR_MODEL_ROTATION_Y = Math.PI; // 正面が逆を向いていたら Math.PI や -Math.PI/2 等に調整
+
+const gltfLoader = new GLTFLoader();
+gltfLoader.load(
+  CAR_MODEL_URL,
+  (gltf) => {
+    car.remove(placeholder);
+
+    const model = gltf.scene;
+    model.scale.setScalar(CAR_MODEL_SCALE);
+    model.rotation.y = CAR_MODEL_ROTATION_Y;
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+
+    car.add(model);
+    info.innerHTML = instructionsHTML;
+  },
+  (progress) => {
+    if (progress.total) {
+      const percent = ((progress.loaded / progress.total) * 100).toFixed(0);
+      info.innerHTML = `車モデル読み込み中... ${percent}%`;
+    }
+  },
+  (error) => {
+    console.error('車モデルの読み込みに失敗しました:', error);
+    info.innerHTML = '車モデルの読み込みに失敗しました（コンソールを確認してください）';
+  }
+);
 
 // --- 操作状態 ---
 const keys = {};
