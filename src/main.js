@@ -109,7 +109,7 @@ car.add(placeholder);
 const CAR_MODEL_URL = '/GTR.glb';
 // モデルによって単位・正面の向きが異なるため、読み込み後に見た目を見ながら調整する
 const CAR_MODEL_SCALE = 1;
-const CAR_MODEL_ROTATION_Y = Math.PI; // 正面が逆を向いていたら Math.PI や -Math.PI/2 等に調整
+const CAR_MODEL_ROTATION_Y = 0; // 正面が逆を向いていたら Math.PI や ±Math.PI/2 等に調整
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.load(
@@ -188,7 +188,9 @@ function updateCar() {
 }
 
 // --- カメラ追従 ---
-const cameraOffset = new THREE.Vector3(0, 4, 9);
+// 車の前進方向は +Z（updateCarの position 更新式より）なので、
+// 追従カメラは車の背後＝ -Z 側に置く
+const cameraOffset = new THREE.Vector3(0, 4, -9);
 function updateCamera() {
   const offset = cameraOffset.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), car.rotation.y);
   const targetPos = car.position.clone().add(offset);
