@@ -21,17 +21,110 @@ canvas {
   display: block;
 }
 
-#info {
+[hidden] {
+  display: none !important;
+}
+
+#speed-display {
   position: fixed;
-  top: 12px;
-  left: 12px;
+  bottom: 20px;
+  right: 20px;
   color: #fff;
-  font-family: sans-serif;
-  font-size: 13px;
-  line-height: 1.6;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 8px 12px;
-  border-radius: 6px;
+  font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  background: rgba(10, 10, 12, 0.72);
+  border-left: 5px solid #e10600;
+  padding: 10px 22px 10px 18px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
   pointer-events: none;
   user-select: none;
+}
+
+/* --- タイムアタックHUD（上部中央） --- */
+#race-hud {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 260px;
+  color: #fff;
+  font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif;
+  text-align: center;
+  background: rgba(10, 10, 12, 0.72);
+  border-top: 4px solid #e10600;
+  padding: 8px 24px 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+#race-hud .race-lap {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  letter-spacing: 0.15em;
+  color: #e10600;
+}
+
+#race-hud .race-time {
+  font-style: italic;
+}
+
+#race-hud .race-time {
+  font-size: 40px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+#race-hud .race-sub {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 13px;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+#race-hud .race-sub b {
+  margin-left: 4px;
+}
+
+#race-hud .race-warning {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffcc33;
+}
+
+/* --- 画面中央のメッセージ --- */
+#race-message {
+  position: fixed;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  user-select: none;
+}
+
+#race-message.countdown {
+  font-size: 120px;
+}
+
+#race-message.record {
+  color: #ffd84a;
+}
+
+#race-message.invalid {
+  color: #ff6b5a;
+  font-size: 28px;
 }

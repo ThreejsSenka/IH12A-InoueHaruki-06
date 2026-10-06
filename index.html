@@ -4,10 +4,143 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Car Race Scene - Three.js</title>
+    <title>GT-R TIME ATTACK</title>
   </head>
   <body>
     <div id="app"></div>
+
+    <!-- タイトル画面（背景では車をショールームのように回して見せる） -->
+    <div id="title-screen" class="screen">
+      <div class="title-panel">
+        <h1 class="title-logo">
+          <span class="title-logo-main">GT-R</span>
+          <span class="title-logo-sub">TIME ATTACK</span>
+        </h1>
+        <div class="title-stripes" aria-hidden="true"><span></span><span></span><span></span></div>
+
+        <!-- メイン -->
+        <section class="title-view" data-view="main">
+          <div class="loading" role="status">
+            <div class="loading-text">車のモデルを読み込み中…</div>
+            <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+          </div>
+
+          <nav class="menu-buttons">
+            <button class="menu-button menu-button-primary" data-action="start" disabled>
+              <span class="menu-button-label">START</span>
+              <span class="menu-button-sub">タイムアタック開始</span>
+            </button>
+            <button class="menu-button" data-action="controls">
+              <span class="menu-button-label">操作説明</span>
+            </button>
+            <button class="menu-button" data-action="credits">
+              <span class="menu-button-label">クレジット</span>
+            </button>
+          </nav>
+
+          <div class="best-lap">
+            <div class="best-lap-label">BEST LAP</div>
+            <div class="best-lap-time">--:--.---</div>
+            <button class="best-lap-reset" data-action="reset-best">記録をリセット</button>
+          </div>
+        </section>
+
+        <!-- 操作説明 -->
+        <section class="title-view" data-view="controls" hidden>
+          <h2 class="view-heading">操作説明</h2>
+          <dl class="controls-list">
+            <dt><kbd>W</kbd><kbd>↑</kbd></dt>
+            <dd>アクセル</dd>
+            <dt><kbd>S</kbd><kbd>↓</kbd></dt>
+            <dd>ブレーキ / 止まっていればバック</dd>
+            <dt><kbd>A</kbd><kbd>D</kbd><kbd>←</kbd><kbd>→</kbd></dt>
+            <dd>ハンドル</dd>
+            <dt><kbd>Shift</kbd></dt>
+            <dd>ブースト（加速と最高速がアップ）</dd>
+            <dt><kbd>R</kbd></dt>
+            <dd>スタートからやり直し</dd>
+            <dt><kbd>Esc</kbd></dt>
+            <dd>一時停止</dd>
+            <dt><kbd>右ドラッグ</kbd></dt>
+            <dd>カメラを回す</dd>
+            <dt><kbd>ホイール</kbd></dt>
+            <dd>カメラを近づける / 離す</dd>
+          </dl>
+          <p class="view-note">
+            速すぎるとコーナーで外に膨らみます。直線の終わりでブレーキを踏んで、コース幅いっぱいを使って曲がるのが速く走るコツです。コースを外れると減速し、チェックポイントを通らないと周回は記録されません。
+          </p>
+          <button class="menu-button menu-button-back" data-action="back">
+            <span class="menu-button-label">戻る</span>
+          </button>
+        </section>
+
+        <!-- クレジット -->
+        <section class="title-view" data-view="credits" hidden>
+          <h2 class="view-heading">クレジット</h2>
+          <dl class="credits-list">
+            <dt>車の3Dモデル</dt>
+            <dd>
+              Nissan GT-R Nismo 2016 Free 3D model<br />
+              作者: AutomotiveGarage
+              <!-- TODO: 配布サイトのURLとライセンスを確認して追記する -->
+            </dd>
+            <dt>エンジン音</dt>
+            <dd>
+              <a href="https://opengameart.org/content/generic-v8-engine-sound" target="_blank" rel="noopener">Generic V8 Engine Sound</a><br />
+              作者: DerMeehdrescher<br />
+              ライセンス: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>（モノラル化・音量調整して使用）
+            </dd>
+            <dt>BGM（タイトル画面）</dt>
+            <dd>
+              <a href="https://opengameart.org/content/racing-menu-looping" target="_blank" rel="noopener">Racing Menu</a><br />
+              作者: Eric Matyas（<a href="https://soundimage.org/" target="_blank" rel="noopener">www.soundimage.org</a>）<br />
+              ライセンス: <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>
+            </dd>
+            <dt>BGM（走行中）</dt>
+            <dd>
+              <a href="https://opengameart.org/content/hyperflight-racing" target="_blank" rel="noopener">Hyperflight Racing</a><br />
+              作者: cynicmusic<br />
+              ライセンス: <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>
+            </dd>
+            <dt>ライブラリ</dt>
+            <dd>
+              <a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>（MIT License）<br />
+              <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a>（MIT License）
+            </dd>
+            <dt>コース・地面</dt>
+            <dd>テクスチャはプログラムで生成</dd>
+          </dl>
+          <p class="view-note">
+            「日産」「NISSAN」「GT-R」は日産自動車株式会社の商標です。本作品は学校の課題として制作した非営利の作品で、日産自動車株式会社とは関係ありません。
+          </p>
+          <button class="menu-button menu-button-back" data-action="back">
+            <span class="menu-button-label">戻る</span>
+          </button>
+        </section>
+      </div>
+
+      <div class="title-hint">↑↓ で選択　Enter で決定</div>
+    </div>
+
+    <!-- 一時停止メニュー -->
+    <div id="pause-menu" class="screen" hidden>
+      <div class="pause-panel" role="dialog" aria-modal="true" aria-labelledby="pause-heading">
+        <h2 id="pause-heading" class="pause-heading">PAUSE</h2>
+        <nav class="menu-buttons">
+          <button class="menu-button menu-button-primary" data-action="resume">
+            <span class="menu-button-label">再開</span>
+            <span class="menu-button-sub">Esc</span>
+          </button>
+          <button class="menu-button" data-action="restart">
+            <span class="menu-button-label">スタートからやり直す</span>
+          </button>
+          <button class="menu-button" data-action="quit">
+            <span class="menu-button-label">タイトルに戻る</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
